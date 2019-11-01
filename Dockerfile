@@ -25,13 +25,13 @@ ENV JAVA_EXTRA_OPTIONS=""
 
 
 
-RUN mkdir -p /opt/app /opt/app/conf /opt/app/logs /tmp/pubnub
-COPY . /tmp/pubnub
-RUN mvn install -f /tmp/pubnub
-RUN ls /tmp/pubnub/target
-RUN cp /tmp/pubnub/target/classes/application.properties /opt/app/conf/
-RUN cp /tmp/pubnub/target/*.jar /opt/app/app.jar
-RUN rm -rf /tmp/pubnub
+RUN mkdir -p /opt/app /opt/app/conf /opt/app/logs /tmp/project
+COPY . /tmp/project
+RUN mvn install -f /tmp/project
+RUN ls -l /tmp/project/target
+RUN cp /tmp/project/target/classes/application.properties /opt/app/conf/
+RUN cp /tmp/project/target/*.jar /opt/app/app.jar
+RUN rm -rf /tmp/project
 EXPOSE 9999
 WORKDIR /opt/app
 CMD exec java ${JAVA_HEAP_OPTIONS} ${JAVA_GC_OPTIONS} ${JAVA_EXTRA_OPTIONS} \
