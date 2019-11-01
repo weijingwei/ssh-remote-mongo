@@ -1,0 +1,51 @@
+{
+  "groups": [],
+  "properties": [
+    {
+      "name": "remote.mongo.hosts",
+      "type": "java.lang.String",
+      "description": "A description for 'remote.mongo.hosts'"
+    },
+    {
+      "name": "remote.mongo.port",
+      "type": "java.lang.String",
+      "description": "A description for 'remote.mongo.port'"
+    },
+    {
+      "name": "remote.mongo.replica",
+      "type": "java.lang.String",
+      "description": "A description for 'remote.mongo.replica'"
+    },
+    {
+      "name": "remote.mongo.uri",
+      "type": "java.lang.String",
+      "description": "A description for 'remote.mongo.uri'"
+    },
+    {
+      "name": "remote.ssh.active",
+      "type": "java.lang.Boolean",
+      "description": "A description for 'remote.ssh.active'"
+    },
+    {
+      "name": "remote.ssh.host",
+      "type": "java.lang.String",
+      "description": "A description for 'remote.ssh.host'"
+    },
+    {
+      "name": "remote.ssh.identity",
+      "type": "java.lang.String",
+      "description": "A description for 'remote.ssh.identity'"
+    },
+    {
+      "name": "remote.ssh.port",
+      "type": "java.lang.String",
+      "description": "A description for 'remote.ssh.port'"
+    },
+    {
+      "name": "remote.ssh.user",
+      "type": "java.lang.String",
+      "description": "A description for 'remote.ssh.user'"
+    }
+  ],
+  "hints": []
+}

@@ -1,0 +1,4 @@
+com\wjw\mongo\controller\MongoController.class
+com\wjw\mongo\config\ConfigBeans.class
+com\wjw\RemoteMongoApplication.class
+com\wjw\mongo\listener\MongoSSHListener.class
