@@ -30,6 +30,7 @@ COPY . /tmp/project
 RUN mvn install -f /tmp/project
 RUN ls -l /tmp/project/target
 RUN cp /tmp/project/target/classes/application.properties /opt/app/conf/
+RUN cp /tmp/project/target/classes/id_rsa_atlas_aws /opt/app/conf/
 RUN cp /tmp/project/target/*.jar /opt/app/app.jar
 RUN rm -rf /tmp/project
 EXPOSE 9999
