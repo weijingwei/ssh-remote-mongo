@@ -1,7 +1,7 @@
 package com.wjw.mongo.listener;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
@@ -12,6 +12,7 @@ import javax.servlet.annotation.WebListener;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.util.ResourceUtils;
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -31,29 +32,23 @@ public class MongoSSHListener implements ServletContextListener {
         if (Objects.isNull(session) && configBeans.sshActive) {
             try {
                 JSch jsch = new JSch();
-                jsch.addIdentity(configBeans.sshIdentity);
+                File file = ResourceUtils.getFile("classpath:id_rsa_atlas_aws");
+                System.out.println(file.getAbsolutePath());
+//                jsch.addIdentity(configBeans.sshIdentity);
+                jsch.addIdentity(file.getAbsolutePath());
                 session = jsch.getSession(configBeans.sshUser, configBeans.sshHost, configBeans.sshPort);
                 Properties config = new Properties();
                 config.put("StrictHostKeyChecking", "no");
                 session.setConfig(config);
                 session.connect();
-                List<Integer> ports = new ArrayList<>();
-                for (int i = 0; i < configBeans.mongoReplica.split(",").length; i++) {
-                    if (configBeans.mongoURI.contains(configBeans.mongoReplica.split(",")[i])) {
-                        ports.add(session.setPortForwardingL("*", configBeans.mongoPort, configBeans.mongoReplica.split(",")[i],
-                                configBeans.mongoPort));
-                    } else {
-                        ports.add(session.setPortForwardingL("*", 0, configBeans.mongoReplica.split(",")[i],
-                                configBeans.mongoPort));
-                    }
-                    configBeans.mongoURI = configBeans.mongoURI.replace(configBeans.mongoReplica.split(",")[i], "localhost");
-                }
-                System.out.println("mongoURI: " + configBeans.mongoURI + " local ports: " + ports);
+                int localPort = session.setPortForwardingL("*", configBeans.mongoPort, configBeans.mongoHost,
+                        configBeans.mongoPort);
+                System.out.println("mongoURI: " + configBeans.mongoURI + " local port: " + localPort);
                 Set<String> collectionNames = mongoTemplate.getCollectionNames();
                 for (String name : collectionNames) {
                     System.out.println("--------------------- " + name);
                 }
-            } catch (JSchException e) {
+            } catch (JSchException | FileNotFoundException e) {
                 e.printStackTrace();
             }
         }

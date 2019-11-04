@@ -17,8 +17,8 @@ public class ConfigBeans {
     public String sshIdentity;
     @Value("${remote.mongo.uri}")
     public String mongoURI;
-    @Value("${remote.mongo.replica}")
-    public String mongoReplica;
+    @Value("${remote.mongo.host}")
+    public String mongoHost;
     @Value("${remote.mongo.port}")
     public int mongoPort;
 }
