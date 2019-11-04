@@ -2,7 +2,8 @@ package com.wjw.mongo.listener;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ import javax.servlet.annotation.WebListener;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ResourceUtils;
 
 import com.jcraft.jsch.JSch;
@@ -25,24 +27,40 @@ public class MongoSSHListener implements ServletContextListener {
     private ConfigBeans configBeans;
     @Autowired
     private MongoTemplate mongoTemplate;
-    private Session session;
+    private List<Session> sessions;
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        if (Objects.isNull(session)) {
+        if (CollectionUtils.isEmpty(sessions)) {
             try {
+            	List<Integer> localPorts = new ArrayList<>();
                 JSch jsch = new JSch();
                 File file = ResourceUtils.getFile("classpath:id_rsa_atlas_aws");
                 System.out.println(file.getAbsolutePath());
                 jsch.addIdentity(file.getAbsolutePath());
-                session = jsch.getSession(configBeans.bastionUser, configBeans.bastionHost, configBeans.bastionPort);
+                Session session = jsch.getSession(configBeans.bastionUser, configBeans.qa1BastionHost, configBeans.bastionPort);
                 Properties config = new Properties();
                 config.put("StrictHostKeyChecking", "no");
+                
                 session.setConfig(config);
                 session.connect();
-                int localPort = session.setPortForwardingL("*", configBeans.mongoPort, configBeans.mongoHost,
-                        configBeans.mongoPort);
-                System.out.println("mongoURI: " + configBeans.mongoURI + " local port: " + localPort);
+                localPorts.add(session.setPortForwardingL("*", configBeans.qa1MongoPort, configBeans.qa1MongoHost,
+                		configBeans.qa1MongoPort));
+                System.out.println("mongoURI: " + configBeans.qa1MongoURI);
+
+                session = jsch.getSession(configBeans.bastionUser, configBeans.dev3BastionHost, configBeans.bastionPort);
+                session.setConfig(config);
+                session.connect();
+                localPorts.add(session.setPortForwardingL("*", configBeans.dev3MongoPort, configBeans.dev3MongoHost,
+                		configBeans.dev3MongoPort));
+                System.out.println("mongoURI: " + configBeans.dev3MongoURI);
+                
+                StringBuffer sb = new StringBuffer("docker run -it --name mysshmongo ");
+                localPorts.forEach(localPort -> {
+                	sb.append("-p " + localPort + ":" + localPort + " ");
+                });
+                sb.append(" -d biptwjw/mysshmongo");
+                System.out.println(sb.toString());
                 Set<String> collectionNames = mongoTemplate.getCollectionNames();
                 for (String name : collectionNames) {
                     System.out.println("--------------------- " + name);
@@ -57,8 +75,10 @@ public class MongoSSHListener implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        if (!Objects.isNull(session)) {
-            session.disconnect();
+        if (!CollectionUtils.isEmpty(sessions)) {
+        	sessions.forEach(session -> {
+        		session.disconnect();
+        	});
         }
         System.out.println("Listener Destroyed.");
         ServletContextListener.super.contextDestroyed(sce);
