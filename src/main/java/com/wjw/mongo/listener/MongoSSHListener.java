@@ -29,14 +29,13 @@ public class MongoSSHListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        if (Objects.isNull(session) && configBeans.sshActive) {
+        if (Objects.isNull(session)) {
             try {
                 JSch jsch = new JSch();
                 File file = ResourceUtils.getFile("classpath:id_rsa_atlas_aws");
                 System.out.println(file.getAbsolutePath());
-//                jsch.addIdentity(configBeans.sshIdentity);
                 jsch.addIdentity(file.getAbsolutePath());
-                session = jsch.getSession(configBeans.sshUser, configBeans.sshHost, configBeans.sshPort);
+                session = jsch.getSession(configBeans.bastionUser, configBeans.bastionHost, configBeans.bastionPort);
                 Properties config = new Properties();
                 config.put("StrictHostKeyChecking", "no");
                 session.setConfig(config);

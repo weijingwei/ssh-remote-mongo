@@ -48,5 +48,20 @@
     "name": "remote.mongo.host",
     "type": "java.lang.String",
     "description": "A description for 'remote.mongo.host'"
+  },
+  {
+    "name": "remote.bastion.port",
+    "type": "java.lang.String",
+    "description": "A description for 'remote.bastion.port'"
+  },
+  {
+    "name": "remote.bastion.user",
+    "type": "java.lang.String",
+    "description": "A description for 'remote.bastion.user'"
+  },
+  {
+    "name": "remote.bastion.host",
+    "type": "java.lang.String",
+    "description": "A description for 'remote.bastion.host'"
   }
 ]}
