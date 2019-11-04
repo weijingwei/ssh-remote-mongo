@@ -37,25 +37,26 @@ public class MongoSSHListener implements ServletContextListener {
 				JSch jsch = new JSch();
 				if (new File("/opt/app/conf/id_rsa_atlas_aws").exists()) {
 					jsch.addIdentity("/opt/app/conf/id_rsa_atlas_aws");
+				} else if (new File(
+						"D:/Program Files/sts-4.2.0.RELEASE/workspace/CM/ssh-remote-mongo/target/classes/id_rsa_atlas_aws")
+								.exists()) {
+					jsch.addIdentity(
+							"D:/Program Files/sts-4.2.0.RELEASE/workspace/CM/ssh-remote-mongo/target/classes/id_rsa_atlas_aws");
 				} else {
 					File file = ResourceUtils.getFile("classpath:id_rsa_atlas_aws");
 					jsch.addIdentity(file.getPath());
 				}
-				Session session = jsch.getSession(cb.bastionUser, cb.qa1BastionHost,
-						cb.bastionPort);
+				Session session = jsch.getSession(cb.bastionUser, cb.qa1BastionHost, cb.bastionPort);
 				Properties config = new Properties();
 				config.put("StrictHostKeyChecking", "no");
-
 				session.setConfig(config);
 				session.connect();
-				localPorts.add(session.setPortForwardingL("*", cb.qa1MongoPort, cb.qa1MongoHost,
-						cb.qa1MongoPort));
-				session = jsch.getSession(cb.bastionUser, cb.dev3BastionHost,
-						cb.bastionPort);
+				localPorts.add(session.setPortForwardingL("*", cb.qa1MongoPort, cb.qa1MongoHost, cb.qa1MongoPort));
+				
+				session = jsch.getSession(cb.bastionUser, cb.dev3BastionHost, cb.bastionPort);
 				session.setConfig(config);
 				session.connect();
-				localPorts.add(session.setPortForwardingL("*", cb.dev3MongoPort, cb.dev3MongoHost,
-						cb.dev3MongoPort));
+				localPorts.add(session.setPortForwardingL("*", cb.dev3MongoPort, cb.dev3MongoHost, cb.dev3MongoPort));
 
 				StringBuffer sb = new StringBuffer("docker run -it --name mysshmongo ");
 				localPorts.forEach(localPort -> {
