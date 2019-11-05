@@ -1,0 +1,37 @@
+{
+  "groups": [
+    {
+      "name": "spring.data.mongodb.dev3.core",
+      "type": "com.wjw.mongo.config.Dev3CoreMongoConfig",
+      "sourceType": "com.wjw.mongo.config.Dev3CoreMongoConfig"
+    },
+    {
+      "name": "spring.data.mongodb.dev3.ssp",
+      "type": "com.wjw.mongo.config.Dev3SspMongoConfig",
+      "sourceType": "com.wjw.mongo.config.Dev3SspMongoConfig"
+    },
+    {
+      "name": "spring.data.mongodb.qa1",
+      "type": "com.wjw.mongo.config.Qa1MongoConfig",
+      "sourceType": "com.wjw.mongo.config.Qa1MongoConfig"
+    }
+  ],
+  "properties": [
+    {
+      "name": "spring.data.mongodb.dev3.core.uri",
+      "type": "java.lang.String",
+      "sourceType": "com.wjw.mongo.config.Dev3CoreMongoConfig"
+    },
+    {
+      "name": "spring.data.mongodb.dev3.ssp.uri",
+      "type": "java.lang.String",
+      "sourceType": "com.wjw.mongo.config.Dev3SspMongoConfig"
+    },
+    {
+      "name": "spring.data.mongodb.qa1.uri",
+      "type": "java.lang.String",
+      "sourceType": "com.wjw.mongo.config.Qa1MongoConfig"
+    }
+  ],
+  "hints": []
+}

@@ -5,13 +5,13 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ResourceUtils;
@@ -26,7 +26,14 @@ public class MongoSSHListener implements ServletContextListener {
 	@Autowired
 	private ConfigBeans cb;
 	@Autowired
-	private MongoTemplate mongoTemplate;
+	@Qualifier(value = "qa1MongoTemplate")
+	private MongoTemplate qa1MongoTemplate;
+	@Autowired
+	@Qualifier(value = "dev3SspMongoTemplate")
+	private MongoTemplate dev3SspMongoTemplate;
+	@Autowired
+	@Qualifier(value = "dev3CoreMongoTemplate")
+	private MongoTemplate dev3CoreMongoTemplate;
 	private List<Session> sessions;
 
 	@Override
@@ -65,10 +72,13 @@ public class MongoSSHListener implements ServletContextListener {
 				});
 				sb.append(" -d biptwjw/mysshmongo");
 				System.out.println(sb.toString());
-				Set<String> collectionNames = mongoTemplate.getCollectionNames();
-				for (String name : collectionNames) {
-					System.out.println("--------------------- " + name);
-				}
+				
+				System.out.println("--------------------------------------- QA1 ---------------------------------------------");
+				qa1MongoTemplate.getCollectionNames().forEach(e -> System.out.println("----------- " + e));
+				System.out.println("--------------------------------------- DEV3 SSP ---------------------------------------------");
+				dev3SspMongoTemplate.getCollectionNames().forEach(e -> System.out.println("----------- " + e));
+				System.out.println("--------------------------------------- DEV3 CORE ---------------------------------------------");
+				dev3CoreMongoTemplate.getCollectionNames().forEach(e -> System.out.println("----------- " + e));
 			} catch (JSchException | FileNotFoundException e) {
 				e.printStackTrace();
 			}

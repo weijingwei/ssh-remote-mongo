@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -29,6 +30,7 @@ import com.google.common.collect.Lists;
 public class MongoController {
 
     @Autowired
+    @Qualifier(value = "dev3SspMongoTemplate")
     private MongoTemplate mongoTemplate;
 
     @SuppressWarnings({"rawtypes", "unchecked"})
