@@ -9,6 +9,11 @@ RUN cp /tmp/project/target/classes/application.properties /opt/app/conf/
 RUN cp /tmp/project/target/classes/id_rsa_atlas_aws /opt/app/conf/
 RUN cp /tmp/project/target/*.jar /opt/app/app.jar
 RUN rm -rf /tmp/project
+RUN rm -rf /usr/share/maven/ref/settings-docker.xml
+RUN rm -rf /usr/local/bin/mvn-entrypoint.sh
+RUN rm -rf /usr/bin/mvn
+RUN rm -rf /usr/share/maven
+
 EXPOSE 9999
 WORKDIR /opt/app
 CMD exec java ${JAVA_HEAP_OPTIONS} ${JAVA_GC_OPTIONS} ${JAVA_EXTRA_OPTIONS} \
