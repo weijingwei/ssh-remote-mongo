@@ -35,7 +35,7 @@ public class MongoSSHListener implements ServletContextListener {
 	@Autowired
 	@Qualifier(value = "dev3CoreMongoTemplate")
 	private MongoTemplate dev3CoreMongoTemplate;
-	private List<Session> sessions;
+	private List<Session> sessions = new ArrayList<>();
 
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
@@ -62,13 +62,13 @@ public class MongoSSHListener implements ServletContextListener {
 					session.setConfig(config);
 					session.connect();
 					localPorts.add(session.setPortForwardingL("*", cb.qa1CoreLocalPort, cb.qa1CoreMongoHost, cb.qa1CoreMongoPort));
+					sessions.add(session);
 				} catch (Exception e) {
-					if (Objects.isNull(session)) {
+					if (Objects.isNull(session) && session.isConnected()) {
 						session.disconnect();
 					}
 					e.printStackTrace();
 				}
-				sessions.add(session);
 				
 				try {
 					session = jsch.getSession(cb.bastionUser, cb.dev3BastionHost, cb.bastionPort);
@@ -76,13 +76,13 @@ public class MongoSSHListener implements ServletContextListener {
 					session.connect();
 					localPorts.add(session.setPortForwardingL("*", cb.dev3SspLocalPort, cb.dev3SspMongoHost, cb.dev3SspMongoPort));
 					localPorts.add(session.setPortForwardingL("*", cb.dev3CoreLocalPort, cb.dev3CoreMongoHost, cb.dev3CoreMongoPort));
+					sessions.add(session);
 				} catch (Exception e) {
-					if (Objects.isNull(session)) {
+					if (Objects.isNull(session) && session.isConnected()) {
 						session.disconnect();
 					}
 					e.printStackTrace();
 				}
-				sessions.add(session);
 				
 				System.out.println("--------------------------------------- QA1 ---------------------------------------------");
 				qa1MongoTemplate.getCollectionNames().forEach(e -> System.out.println("----------- " + e));
@@ -109,7 +109,9 @@ public class MongoSSHListener implements ServletContextListener {
 	public void contextDestroyed(ServletContextEvent sce) {
 		if (!CollectionUtils.isEmpty(sessions)) {
 			sessions.forEach(session -> {
-				session.disconnect();
+				if (!Objects.isNull(session) && session.isConnected()) {
+					session.disconnect();
+				}
 			});
 		}
 		System.out.println("Listener Destroyed.");
