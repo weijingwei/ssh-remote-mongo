@@ -51,12 +51,13 @@ public class MongoSSHListener implements ServletContextListener {
 				config.put("StrictHostKeyChecking", "no");
 				session.setConfig(config);
 				session.connect();
-				localPorts.add(session.setPortForwardingL("*", cb.qa1MongoPort, cb.qa1MongoHost, cb.qa1MongoPort));
+				localPorts.add(session.setPortForwardingL("*", cb.qa1CoreLocalPort, cb.qa1CoreMongoHost, cb.qa1CoreMongoPort));
 				
 				session = jsch.getSession(cb.bastionUser, cb.dev3BastionHost, cb.bastionPort);
 				session.setConfig(config);
 				session.connect();
-				localPorts.add(session.setPortForwardingL("*", cb.dev3MongoPort, cb.dev3MongoHost, cb.dev3MongoPort));
+				localPorts.add(session.setPortForwardingL("*", cb.dev3SspLocalPort, cb.dev3SspMongoHost, cb.dev3SspMongoPort));
+				localPorts.add(session.setPortForwardingL("*", cb.dev3CoreLocalPort, cb.dev3CoreMongoHost, cb.dev3CoreMongoPort));
 
 				StringBuffer sb = new StringBuffer("docker run -it --name mysshmongo ");
 				localPorts.forEach(localPort -> {
