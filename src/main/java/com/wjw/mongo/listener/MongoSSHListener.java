@@ -63,6 +63,8 @@ public class MongoSSHListener implements ServletContextListener {
 					session.connect();
 					localPorts.add(session.setPortForwardingL("*", cb.qa1CoreLocalPort, cb.qa1CoreMongoHost, cb.qa1CoreMongoPort));
 					sessions.add(session);
+					System.out.println("--------------------------------------- QA1 ---------------------------------------------");
+					qa1MongoTemplate.getCollectionNames().forEach(e -> System.out.println("----------- " + e));
 				} catch (Exception e) {
 					if (Objects.isNull(session) && session.isConnected()) {
 						session.disconnect();
@@ -77,19 +79,16 @@ public class MongoSSHListener implements ServletContextListener {
 					localPorts.add(session.setPortForwardingL("*", cb.dev3SspLocalPort, cb.dev3SspMongoHost, cb.dev3SspMongoPort));
 					localPorts.add(session.setPortForwardingL("*", cb.dev3CoreLocalPort, cb.dev3CoreMongoHost, cb.dev3CoreMongoPort));
 					sessions.add(session);
+					System.out.println("--------------------------------------- DEV3 SSP ---------------------------------------------");
+					dev3SspMongoTemplate.getCollectionNames().forEach(e -> System.out.println("----------- " + e));
+					System.out.println("--------------------------------------- DEV3 CORE ---------------------------------------------");
+					dev3CoreMongoTemplate.getCollectionNames().forEach(e -> System.out.println("----------- " + e));
 				} catch (Exception e) {
 					if (Objects.isNull(session) && session.isConnected()) {
 						session.disconnect();
 					}
 					e.printStackTrace();
 				}
-				
-				System.out.println("--------------------------------------- QA1 ---------------------------------------------");
-				qa1MongoTemplate.getCollectionNames().forEach(e -> System.out.println("----------- " + e));
-				System.out.println("--------------------------------------- DEV3 SSP ---------------------------------------------");
-				dev3SspMongoTemplate.getCollectionNames().forEach(e -> System.out.println("----------- " + e));
-				System.out.println("--------------------------------------- DEV3 CORE ---------------------------------------------");
-				dev3CoreMongoTemplate.getCollectionNames().forEach(e -> System.out.println("----------- " + e));
 
 				StringBuffer sb = new StringBuffer("docker run -it --name mysshmongo ");
 				localPorts.forEach(localPort -> {
