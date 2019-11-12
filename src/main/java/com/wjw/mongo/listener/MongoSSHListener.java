@@ -11,6 +11,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -58,31 +60,37 @@ public class MongoSSHListener implements ServletContextListener {
 				Properties config = new Properties();
 				config.put("StrictHostKeyChecking", "no");
 				try {
-					session = jsch.getSession(cb.bastionUser, cb.qa1BastionHost, cb.bastionPort);
+					String qa1BastionHost = Objects.isNull(System.getenv("qa1BastionHost")) ? cb.qa1BastionHost : System.getenv("qa1BastionHost");
+					session = jsch.getSession(cb.bastionUser, qa1BastionHost, cb.bastionPort);
 					session.setConfig(config);
 					session.connect();
-					localPorts.add(session.setPortForwardingL("*", cb.qa1CoreLocalPort, cb.qa1CoreMongoHost, cb.qa1CoreMongoPort));
+					String qa1CoreMongoHost = Objects.isNull(System.getenv("qa1CoreMongoHost")) ? cb.qa1CoreMongoHost : System.getenv("qa1CoreMongoHost");
+					String qa1MongoHost = Objects.isNull(System.getenv("qa1MongoHost")) ? cb.qa1CoreMongoHost : System.getenv("qa1MongoHost");
+					localPorts.add(session.setPortForwardingL("*", cb.qa1CoreLocalPort, qa1MongoHost, cb.qa1CoreMongoPort));
 					sessions.add(session);
-					System.out.println("--------------------------------------- QA1 ---------------------------------------------");
 					qa1MongoTemplate.getCollectionNames().forEach(e -> System.out.println("----------- " + e));
+					System.out.println("--------------------------------------- QA1 -- " + qa1BastionHost + " -- " + qa1CoreMongoHost + " -------------------------------------------");
 				} catch (Exception e) {
 					if (Objects.isNull(session) && session.isConnected()) {
 						session.disconnect();
 					}
 					e.printStackTrace();
 				}
-				
+			
 				try {
-					session = jsch.getSession(cb.bastionUser, cb.dev3BastionHost, cb.bastionPort);
+					String dev3BastionHost = Objects.isNull(System.getenv("dev3BastionHost")) ? cb.dev3BastionHost : System.getenv("dev3BastionHost");
+					session = jsch.getSession(cb.bastionUser, dev3BastionHost, cb.bastionPort);
 					session.setConfig(config);
 					session.connect();
-					localPorts.add(session.setPortForwardingL("*", cb.dev3SspLocalPort, cb.dev3SspMongoHost, cb.dev3SspMongoPort));
-					localPorts.add(session.setPortForwardingL("*", cb.dev3CoreLocalPort, cb.dev3CoreMongoHost, cb.dev3CoreMongoPort));
+					String dev3SspMongoHost = Objects.isNull(System.getenv("dev3SspMongoHost")) ? cb.dev3SspMongoHost : System.getenv("dev3SspMongoHost");
+					localPorts.add(session.setPortForwardingL("*", cb.dev3SspLocalPort, dev3SspMongoHost, cb.dev3SspMongoPort));
+					String dev3CoreMongoHost = Objects.isNull(System.getenv("dev3CoreMongoHost")) ? cb.dev3CoreMongoHost : System.getenv("dev3CoreMongoHost");
+					localPorts.add(session.setPortForwardingL("*", cb.dev3CoreLocalPort, dev3CoreMongoHost, cb.dev3CoreMongoPort));
 					sessions.add(session);
-					System.out.println("--------------------------------------- DEV3 SSP ---------------------------------------------");
-					dev3SspMongoTemplate.getCollectionNames().forEach(e -> System.out.println("----------- " + e));
-					System.out.println("--------------------------------------- DEV3 CORE ---------------------------------------------");
 					dev3CoreMongoTemplate.getCollectionNames().forEach(e -> System.out.println("----------- " + e));
+					System.out.println("--------------------------------------- DEV3 CORE -- " + dev3BastionHost+ " -- " + dev3CoreMongoHost + " -------------------------------------------");
+					dev3SspMongoTemplate.getCollectionNames().forEach(e -> System.out.println("----------- " + e));
+					System.out.println("--------------------------------------- DEV3 SSP -- " + dev3BastionHost + " -- " + dev3SspMongoHost + "-------------------------------------------");
 				} catch (Exception e) {
 					if (Objects.isNull(session) && session.isConnected()) {
 						session.disconnect();
@@ -116,4 +124,5 @@ public class MongoSSHListener implements ServletContextListener {
 		System.out.println("Listener Destroyed.");
 		ServletContextListener.super.contextDestroyed(sce);
 	}
+	
 }
