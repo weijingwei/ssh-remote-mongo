@@ -109,7 +109,7 @@ public class MongoSSHListener implements ServletContextListener {
 			}
 		}
 		ServletContextListener.super.contextInitialized(sce);
-		System.out.println("--------------------- Listener Started.");
+		System.out.println("--------------------- Listener Started. Tag: 0.0.19");
 	}
 
 	@Override
