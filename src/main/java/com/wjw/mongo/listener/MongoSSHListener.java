@@ -11,8 +11,6 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import org.bson.Document;
-import org.bson.conversions.Bson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -68,7 +66,8 @@ public class MongoSSHListener implements ServletContextListener {
 					String qa1CoreMongoHost = StringUtils.isEmpty(System.getenv("qa1CoreMongoHost")) ? cb.qa1CoreMongoHost : System.getenv("qa1CoreMongoHost");
 					localPorts.add(session.setPortForwardingL("*", cb.qa1CoreLocalPort, qa1CoreMongoHost, cb.qa1CoreMongoPort));
 					sessions.add(session);
-					qa1MongoTemplate.getCollectionNames().forEach(e -> System.out.print(" " + e));
+					qa1MongoTemplate.getCollectionNames().forEach(e -> System.out.print(e + " -- "));
+					System.out.println();
 					System.out.println("--------------------------------------- QA1 -- " + qa1BastionHost + " -- " + qa1CoreMongoHost + " -------------------------------------------");
 				} catch (Exception e) {
 					if (Objects.isNull(session) && session.isConnected()) {
@@ -87,9 +86,11 @@ public class MongoSSHListener implements ServletContextListener {
 					String dev3CoreMongoHost = StringUtils.isEmpty(System.getenv("dev3CoreMongoHost")) ? cb.dev3CoreMongoHost : System.getenv("dev3CoreMongoHost");
 					localPorts.add(session.setPortForwardingL("*", cb.dev3CoreLocalPort, dev3CoreMongoHost, cb.dev3CoreMongoPort));
 					sessions.add(session);
-					dev3CoreMongoTemplate.getCollectionNames().forEach(e -> System.out.print(" " + e));
+					dev3CoreMongoTemplate.getCollectionNames().forEach(e -> System.out.print(e + " -- "));
+					System.out.println();
 					System.out.println("--------------------------------------- DEV3 CORE -- " + dev3BastionHost+ " -- " + dev3CoreMongoHost + " -------------------------------------------");
-					dev3SspMongoTemplate.getCollectionNames().forEach(e -> System.out.print(" " + e));
+					dev3SspMongoTemplate.getCollectionNames().forEach(e -> System.out.print(e + " -- "));
+					System.out.println();
 					System.out.println("--------------------------------------- DEV3 SSP -- " + dev3BastionHost + " -- " + dev3SspMongoHost + " -------------------------------------------");
 				} catch (Exception e) {
 					if (Objects.isNull(session) && session.isConnected()) {
@@ -109,7 +110,7 @@ public class MongoSSHListener implements ServletContextListener {
 			}
 		}
 		ServletContextListener.super.contextInitialized(sce);
-		System.out.println("--------------------- Listener Started. Tag: 0.0.19");
+		System.out.println("--------------------- Listener Started.");
 	}
 
 	@Override
