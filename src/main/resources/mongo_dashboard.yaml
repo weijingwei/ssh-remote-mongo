@@ -1,0 +1,82 @@
+# ---------------------------------------------------------------------------
+# EKube info about : DeploymentContainer 'mysshmongo'
+# Timestamp        : 2019-12-24 09:58:17
+# ---------------------------------------------------------------------------
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  creationTimestamp: "2019-12-24T01:21:45Z"
+  generation: 1
+  labels:
+    k8s-app: "mysshmongo"
+  name: "mysshmongo"
+  namespace: "mykube"
+  resourceVersion: "5491923"
+  selfLink: "/apis/apps/v1/namespaces/mykube/deployments/mysshmongo"
+  uid: "c0165867-25eb-11ea-9f00-00155d66d536"
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      k8s-app: "mysshmongo"
+  strategy:
+    rollingUpdate:
+      maxSurge: "25%"
+      maxUnavailable: "25%"
+    type: "RollingUpdate"
+  template:
+    metadata:
+      labels:
+        k8s-app: "mysshmongo"
+      name: "mysshmongo"
+    spec:
+      containers:
+      - env:
+        - name: "qa1BastionHost"
+          value: "18.191.139.221"
+        - name: "qa1CoreMongoHost"
+          value: "db-core-1"
+        - name: "dev3BastionHost"
+          value: "18.236.81.75"
+        - name: "dev3SspMongoHost"
+          value: "db-ssp-1"
+        - name: "dev3CoreMongoHost"
+          value: "db-core-1"
+        image: "biptwjw/mysshmongo:version-0.0.2"
+        imagePullPolicy: "IfNotPresent"
+        name: "mysshmongo"
+        resources: {}
+        securityContext:
+          privileged: false
+          procMount: "Default"
+        terminationMessagePath: "/dev/termination-log"
+        terminationMessagePolicy: "File"
+      dnsPolicy: "ClusterFirst"
+      restartPolicy: "Always"
+      schedulerName: "default-scheduler"
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2019-12-24T01:21:49Z"
+    lastUpdateTime: "2019-12-24T01:21:49Z"
+    message: "Deployment has minimum availability."
+    reason: "MinimumReplicasAvailable"
+    status: "True"
+    type: "Available"
+  - lastTransitionTime: "2019-12-24T01:21:45Z"
+    lastUpdateTime: "2019-12-24T01:21:49Z"
+    message: "ReplicaSet \"mysshmongo-7b4d5c9795\" has successfully progressed."
+    reason: "NewReplicaSetAvailable"
+    status: "True"
+    type: "Progressing"
+  observedGeneration: 1
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1
