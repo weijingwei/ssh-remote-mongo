@@ -44,7 +44,9 @@ public class MongoSSHListener implements ServletContextListener {
 			try {
 				List<Integer> localPorts = new ArrayList<>();
 				JSch jsch = new JSch();
-				if (new File("/opt/app/conf/id_rsa_atlas_aws").exists()) {
+				if (!StringUtils.isEmpty(System.getenv("bastionKeyPath")) && new File(System.getenv("bastionKeyPath")).exists()) {
+					jsch.addIdentity(System.getenv("bastionKeyPath") + "/id_rsa_atlas_aws");
+				} else if (new File("/opt/app/conf/id_rsa_atlas_aws").exists()) {
 					jsch.addIdentity("/opt/app/conf/id_rsa_atlas_aws");
 				} else if (new File(
 						"D:/Program Files/sts-4.2.0.RELEASE/workspace/CM/ssh-remote-mongo/target/classes/id_rsa_atlas_aws")
